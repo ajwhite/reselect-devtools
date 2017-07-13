@@ -4,6 +4,7 @@ import * as Reselect from 'reselect';
 
 export function createSelector (...args) {
   const selector = Reselect.createSelector(...args);
+  const inputSelectors =  args.slice(0, args.length - 1);;
   var debug = false;
   var debugLabel = null;
 
@@ -12,15 +13,19 @@ export function createSelector (...args) {
       return selector(...selectorArgs);
     }
 
-    const out = selector(...selectorArgs);
+    const output = selector(...selectorArgs);
+    const inputs = inputSelectors.map(sel => sel(...selectorArgs));
 
     console.groupCollapsed(
       'Selector' + (debugLabel ? ` - ${debugLabel}` : '')
     );
-    console.info(out);
+    console.info({
+      inputs,
+      output
+    })
     console.groupEnd();
 
-    return out;
+    return output;
   }
 
   debuggableSelector.debug = (label) => {
